@@ -26,7 +26,7 @@ Este sistema é um **arquivo HTML único e autônomo**:
 
 > **Resumindo:** Cada vez que salva, você cria uma nova "versão" do seu sistema com os dados atualizados. Sempre utilize o último arquivo baixado!
 
-> ## Imagem de Exemplo
+## Imagem da Tela
 
 ![Captura de Tela](imagem.png)
 

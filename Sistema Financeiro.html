@@ -1,0 +1,1789 @@
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Controle Financeiro Mensal</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1600px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .template-bar {
+      padding: 20px 30px 0 30px;
+      background: white;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .template-btn {
+      background: #8e44ad;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 10px;
+      color: white;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: background 0.3s ease;
+    }
+
+    .template-btn:hover {
+      background: #732d91;
+    }
+
+    .total-summary {
+      display: block;
+      background: linear-gradient(135deg, #4e54c8, #8f94fb);
+      color: white;
+      margin: 20px 30px;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .total-summary h3 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 1.5em;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .annual-summary {
+      display: none;
+      background: linear-gradient(135deg, #f39c12, #e67e22);
+      color: white;
+      margin: 20px 30px;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .annual-summary h3 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 1.5em;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .annual-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 15px;
+    }
+
+    .annual-card {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 15px;
+      border-radius: 10px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+    }
+
+    .annual-card h4 {
+      font-size: 12px;
+      opacity: 0.9;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .annual-card .annual-value {
+      font-size: 1.4em;
+      font-weight: bold;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    }
+
+
+    .header {
+      background: linear-gradient(135deg, #2c3e50, #34495e);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+    }
+
+    .month-selector {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .month-selector select,
+    .month-selector input,
+    .month-selector button {
+      padding: 10px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+
+    .history-btn {
+      background: #e67e22;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .history-btn:hover {
+      background: #d35400;
+    }
+
+    .save-file-btn {
+      background: #27ae60;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .save-file-btn:hover {
+      background: #229954;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 20px;
+      padding: 30px;
+      background: #f8f9fa;
+    }
+
+    .summary-card {
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      text-align: center;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      transition: transform 0.3s ease;
+    }
+
+    .summary-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .summary-card h3 {
+      color: #666;
+      margin-bottom: 10px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .summary-card .value {
+      font-size: 1.8em;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .income {
+      color: #27ae60;
+    }
+
+    .expense {
+      color: #e74c3c;
+    }
+
+    .balance {
+      color: #3498db;
+    }
+
+    .main-content {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      padding: 30px;
+    }
+
+    .section {
+      background: white;
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .section h2 {
+      margin-bottom: 15px;
+      color: #2c3e50;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 1.3em;
+    }
+
+    .add-btn {
+      background: #3498db;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: background 0.3s ease;
+    }
+
+    .add-btn:hover {
+      background: #2980b9;
+    }
+
+    .item-list {
+      flex-grow: 1;
+      min-height: 50px;
+      /* Garante altura mínima mesmo vazio */
+    }
+
+    .item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      margin-bottom: 8px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .item:hover {
+      background: #e9ecef;
+      transform: translateX(3px);
+    }
+
+    .item-name {
+      font-weight: 500;
+      flex-grow: 1;
+      font-size: 14px;
+      word-break: break-word;
+      /* Evita que nomes longos quebrem o layout */
+    }
+
+    .item-value {
+      font-weight: bold;
+      margin-left: 10px;
+      /* Adiciona espaço à esquerda */
+      margin-right: 10px;
+      font-size: 14px;
+      cursor: pointer;
+      padding: 2px 6px;
+      border-radius: 4px;
+      transition: background 0.3s ease;
+      white-space: nowrap;
+      /* Impede que o valor quebre linha */
+    }
+
+
+    .item-value:hover {
+      background: rgba(52, 152, 219, 0.1);
+    }
+
+    .item-actions {
+      display: flex;
+      gap: 5px;
+    }
+
+    .edit-btn,
+    .delete-btn {
+      border: none;
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 11px;
+      transition: all 0.3s ease;
+    }
+
+    .edit-btn {
+      background: #f39c12;
+      color: white;
+    }
+
+    .edit-btn:hover {
+      background: #e67e22;
+    }
+
+    .delete-btn {
+      background: #e74c3c;
+      color: white;
+    }
+
+    .delete-btn:hover {
+      background: #c0392b;
+    }
+
+    .add-form,
+    .edit-form {
+      display: none;
+      margin-top: 10px;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border: 2px solid #3498db;
+    }
+
+    .add-form input,
+    .edit-form input {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 8px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 13px;
+    }
+
+    .value-input-container {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 8px;
+    }
+
+    .operation-selector {
+      display: flex;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .operation-btn {
+      padding: 8px 12px;
+      border: none;
+      background: #f8f9fa;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: bold;
+    }
+
+    .operation-btn.active {
+      background: #3498db;
+      color: white;
+    }
+
+    .operation-btn:hover {
+      background: #e9ecef;
+    }
+
+    .operation-btn.active:hover {
+      background: #2980b9;
+    }
+
+    .value-input {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 13px;
+    }
+
+    .form-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .form-buttons button {
+      flex: 1;
+      padding: 8px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .save-btn {
+      background: #27ae60;
+      color: white;
+    }
+
+    .cancel-btn {
+      background: #95a5a6;
+      color: white;
+    }
+
+    .total {
+      margin-top: auto;
+      /* Empurra o total para baixo */
+      padding: 12px;
+      background: #2c3e50;
+      color: white;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+
+    .history-modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .history-content {
+      background-color: white;
+      margin: 5% auto;
+      padding: 30px;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 800px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .history-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px;
+      margin-bottom: 10px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .history-item:hover {
+      background: #e9ecef;
+    }
+
+    .history-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .delete-month-btn {
+      background: #e74c3c;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 11px;
+      transition: background 0.3s ease;
+    }
+
+    .delete-month-btn:hover {
+      background: #c0392b;
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover {
+      color: black;
+    }
+
+    /* Estilos para Modais Customizados */
+    .confirm-modal {
+      display: none;
+      /* Inicia escondido */
+      position: fixed;
+      z-index: 1100;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      /* Adicionado para centralizar */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .confirm-content {
+      background-color: white;
+      /* margin: 15% auto; -> Removido */
+      padding: 30px;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    /* ... (restante do CSS dos modais) ... */
+
+
+    .confirm-buttons {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+      justify-content: center;
+    }
+
+    .confirm-buttons button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .confirm-yes {
+      background: #e74c3c;
+      color: white;
+    }
+
+    .confirm-yes:hover {
+      background: #c0392b;
+    }
+
+
+    .confirm-no {
+      background: #95a5a6;
+      color: white;
+    }
+
+    .confirm-no:hover {
+      background: #7f8c8d;
+    }
+
+
+    @media (max-width: 1300px) {
+      .main-content {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .main-content {
+        grid-template-columns: 1fr;
+      }
+
+      .summary {
+        grid-template-columns: 1fr;
+      }
+
+      .month-selector {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .annual-cards {
+        grid-template-columns: 1fr;
+      }
+
+      .item {
+        flex-direction: column;
+        /* Empilha nome, valor, botões */
+        align-items: flex-start;
+        /* Alinha à esquerda */
+        padding: 10px;
+      }
+
+      .item-value {
+        margin-left: 0;
+        /* Remove margem esquerda */
+        margin-top: 5px;
+        /* Adiciona espaço acima */
+        margin-bottom: 8px;
+        /* Adiciona espaço abaixo */
+      }
+
+      .item-actions {
+        width: 100%;
+        /* Ocupa toda a largura */
+        justify-content: flex-end;
+        /* Alinha botões à direita */
+      }
+
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <div class="template-bar">
+      <button class="template-btn" onclick="generateEmptyTemplate()">
+        ✨ Gerar Cópia Vazia (Template)
+      </button>
+    </div>
+
+    <div class="total-summary" id="totalSummary" style="display: none;">
+      <h3>📊 Resumo Geral (Todos os Anos)</h3>
+      <div class="annual-cards">
+        <div class="annual-card">
+          <h4>Entradas Fixas</h4>
+          <div class="annual-value" id="globalIncomeFixed">R$&nbsp;0,00</div>
+        </div>
+        <div class="annual-card">
+          <h4>Entradas Variáveis</h4>
+          <div class="annual-value" id="globalIncomeVariable">R$&nbsp;0,00</div>
+        </div>
+        <div class="annual-card">
+          <h4>Saídas Fixas</h4>
+          <div class="annual-value" id="globalFixedExpense">R$&nbsp;0,00</div>
+        </div>
+        <div class="annual-card">
+          <h4>Saídas Eventuais</h4>
+          <div class="annual-value" id="globalEventualExpense">R$&nbsp;0,00</div>
+        </div>
+        <div class="annual-card">
+          <h4>Saldo Total</h4>
+          <div class="annual-value" id="globalBalance">R$&nbsp;0,00</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="annual-summary" id="annualSummary" style="display: none;">
+      <h3>📊 Resumo do Ano <span id="currentYearDisplay">2025</span></h3>
+      <div class="annual-cards">
+        <div class="annual-card">
+          <h4>Entradas Fixas</h4>
+          <div class="annual-value" id="annualIncomeFixed">R&nbsp;0,00</div>
+        </div>
+        <div class="annual-card">
+          <h4>Entradas Variáveis</h4>
+          <div class="annual-value" id="annualIncomeVariable">R&nbsp;0,00</div>
+        </div>
+        <div class="annual-card">
+          <h4>Saídas Fixas</h4>
+          <div class="annual-value" id="annualFixedExpense">R&nbsp;0,00</div>
+        </div>
+        <div class="annual-card">
+          <h4>Saídas Eventuais</h4>
+          <div class="annual-value" id="annualEventualExpense">R&nbsp;0,00</div>
+        </div>
+        <div class="annual-card">
+          <h4>Saldo do Ano</h4>
+          <div class="annual-value" id="annualBalance">R&nbsp;0,00</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="header">
+      <h1>💰 Controle Financeiro</h1>
+      <div class="month-selector">
+        <select id="monthSelect">
+          <option value="1">Janeiro</option>
+          <option value="2">Fevereiro</option>
+          <option value="3">Março</option>
+          <option value="4">Abril</option>
+          <option value="5">Maio</option>
+          <option value="6">Junho</option>
+          <option value="7">Julho</option>
+          <option value="8">Agosto</option>
+          <option value="9">Setembro</option>
+          <option value="10">Outubro</option>
+          <option value="11">Novembro</option>
+          <option value="12">Dezembro</option>
+        </select>
+        <input type="number" id="yearInput" value="2025" min="2020" max="2035">
+        <button class="history-btn" onclick="showHistory()">📊 Histórico</button>
+        <button class="save-file-btn" onclick="saveToFile()" style="">💾 Salvar Arquivo</button>
+      </div>
+    </div>
+
+    <div class="summary">
+      <div class="summary-card">
+        <h3>Total Entradas Fixas</h3>
+        <div class="value income" id="totalIncomeFixed">R$&nbsp;0,00</div>
+      </div>
+      <div class="summary-card">
+        <h3>Total Entradas Variáveis</h3>
+        <div class="value income" id="totalIncomeVariable">R$&nbsp;0,00</div>
+      </div>
+      <div class="summary-card">
+        <h3>Total Saídas Fixas</h3>
+        <div class="value expense" id="totalFixedExpense">R$&nbsp;0,00</div>
+      </div>
+      <div class="summary-card">
+        <h3>Total Saídas Eventuais</h3>
+        <div class="value expense" id="totalEventualExpense">R$&nbsp;0,00</div>
+      </div>
+      <div class="summary-card">
+        <h3>Saldo do Mês</h3>
+        <div class="value balance" id="monthBalance">R$&nbsp;0,00</div>
+      </div>
+    </div>
+
+    <div class="main-content">
+      <div class="section">
+        <h2>📈 Entradas Fixas<button class="add-btn" onclick="showAddForm('incomeFixed')">+ Adicionar</button></h2>
+        <div class="add-form" id="incomeFixedForm" style="display: none;"><input type="text" id="incomeFixedDesc"
+            placeholder="Descrição da entrada fixa"><input type="number" id="incomeFixedValue" placeholder="Valor (R$)"
+            step="0.01" min="0">
+          <div class="form-buttons"><button class="save-btn" onclick="addItem('incomeFixed')">Salvar</button><button
+              type="button" class="cancel-btn" onclick="hideAddForm('incomeFixed')">Cancelar</button></div>
+        </div>
+        <div id="incomeFixedList" class="item-list"><!-- Itens aqui --></div>
+        <div class="total" id="incomeFixedTotal">Total: R$&nbsp;0,00</div>
+      </div>
+      <div class="section">
+        <h2>📊 Entradas Variáveis<button class="add-btn" onclick="showAddForm('incomeVariable')">+ Adicionar</button>
+        </h2>
+        <div class="add-form" id="incomeVariableForm" style="display: none;"><input type="text" id="incomeVariableDesc"
+            placeholder="Descrição da entrada variável"><input type="number" id="incomeVariableValue"
+            placeholder="Valor (R$)" step="0.01" min="0">
+          <div class="form-buttons"><button class="save-btn" onclick="addItem('incomeVariable')">Salvar</button><button
+              type="button" class="cancel-btn" onclick="hideAddForm('incomeVariable')">Cancelar</button></div>
+        </div>
+        <div id="incomeVariableList" class="item-list"><!-- Itens aqui --></div>
+        <div class="total" id="incomeVariableTotal">Total: R$&nbsp;0,00</div>
+      </div>
+      <div class="section">
+        <h2>📉 Saídas Fixas<button class="add-btn" onclick="showAddForm('fixedExpense')">+ Adicionar</button></h2>
+        <div class="add-form" id="fixedExpenseForm" style="display: none;"><input type="text" id="fixedExpenseDesc"
+            placeholder="Descrição da saída fixa"><input type="number" id="fixedExpenseValue" placeholder="Valor (R$)"
+            step="0.01" min="0">
+          <div class="form-buttons"><button class="save-btn" onclick="addItem('fixedExpense')">Salvar</button><button
+              type="button" class="cancel-btn" onclick="hideAddForm('fixedExpense')">Cancelar</button></div>
+        </div>
+        <div id="fixedExpenseList" class="item-list"><!-- Itens aqui --></div>
+        <div class="total" id="fixedExpenseTotal">Total: R$&nbsp;0,00</div>
+      </div>
+      <div class="section">
+        <h2>💸 Saídas Eventuais<button class="add-btn" onclick="showAddForm('eventualExpense')">+ Adicionar</button>
+        </h2>
+        <div class="add-form" id="eventualExpenseForm" style="display: none;"><input type="text"
+            id="eventualExpenseDesc" placeholder="Descrição da saída eventual"><input type="number"
+            id="eventualExpenseValue" placeholder="Valor (R$)" step="0.01" min="0">
+          <div class="form-buttons"><button class="save-btn" onclick="addItem('eventualExpense')">Salvar</button><button
+              type="button" class="cancel-btn" onclick="hideAddForm('eventualExpense')">Cancelar</button></div>
+        </div>
+        <div id="eventualExpenseList" class="item-list"><!-- Itens aqui --></div>
+        <div class="total" id="eventualExpenseTotal">Total: R$&nbsp;0,00</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modais (Histórico e Confirmação) -->
+  <div id="historyModal" class="history-modal" style="display: none;">
+    <div class="history-content">
+      <span class="close" onclick="closeHistory()">×</span>
+      <h2>📊 Histórico Mensal</h2>
+      <div id="historyList"></div>
+    </div>
+  </div>
+  <!-- O modal de confirmação será criado dinamicamente pelo JS -->
+
+
+  <script>
+    // Sistema de armazenamento persistente
+    let financialData = {};
+    // let confirmCallback = null; // Removido - agora é gerenciado localmente em showConfirm
+
+    // Dados iniciais (deixados vazios)
+    const initialData = {};
+
+    // Carregar dados
+    function loadData() {
+      const scriptElement = document.getElementById('financialDataStorage');
+      if (scriptElement && scriptElement.textContent.trim().length > 0) {
+        try {
+          const parsedData = JSON.parse(scriptElement.textContent);
+          // Verifica se é um objeto e não null
+          if (typeof parsedData === 'object' && parsedData !== null) {
+            financialData = parsedData;
+          } else {
+            console.warn("Dados na tag script não são um objeto JSON válido. Iniciando vazio.");
+            financialData = {};
+          }
+        } catch (e) {
+          console.error("Erro ao parsear dados JSON da tag script. Iniciando vazio.", e);
+          financialData = {};
+        }
+      } else {
+        // Se a tag não existe ou está vazia, inicia vazio
+        financialData = {};
+      }
+    }
+
+    // Salvar dados no HTML
+    function saveData() {
+      let scriptElement = document.getElementById('financialDataStorage');
+      if (!scriptElement) {
+        scriptElement = document.createElement('script');
+        scriptElement.id = 'financialDataStorage';
+        scriptElement.type = 'application/json';
+        // Insere no final do head para melhor organização
+        document.head.appendChild(scriptElement);
+      }
+      // Garante que salve {} se vazio e formate corretamente
+      scriptElement.textContent = JSON.stringify(financialData, null, 2);
+    }
+
+    // Salvar arquivo HTML atualizado
+    function saveToFile(event) { // Adiciona event como parâmetro
+      saveData(); // Garante que os últimos dados estejam na tag script
+
+      const htmlContent = document.documentElement.outerHTML;
+      const blob = new Blob([htmlContent], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = "Sistema Financeiro.html";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      // Feedback visual no botão que foi clicado
+      if (event && event.target) {
+        const btn = event.target;
+        const originalText = btn.textContent;
+        btn.textContent = '✅ Salvo!';
+        btn.style.background = '#27ae60'; // Cor de sucesso
+        // Volta ao normal depois de 2 segundos
+        setTimeout(() => {
+          // Verifica se o botão ainda existe no DOM
+          if (document.body.contains(btn)) {
+            btn.textContent = originalText;
+            btn.style.background = ''; // Remove a cor inline
+          }
+        }, 2000);
+      }
+    }
+
+
+    // Gerar Template Vazio (v6 - Limpeza via DOM)
+    function generateEmptyTemplate() {
+      // 1. Cria um clone do documento atual em memória para não afetar a página visível
+      const clonedDocument = document.cloneNode(true);
+
+      // 2. Encontra e limpa a tag de dados no clone
+      const scriptTag = clonedDocument.getElementById('financialDataStorage');
+      if (scriptTag) {
+        scriptTag.textContent = '\n\n'; // Limpa o conteúdo
+      }
+
+      // 3. Encontra e reseta todos os valores de resumo e totais no clone
+      const valueElements = clonedDocument.querySelectorAll('.annual-value, .summary-card .value, .total');
+      valueElements.forEach(el => {
+        if (el.classList.contains('total')) {
+          el.textContent = 'Total: R\u00A00,00'; // \u00A0 é o espaço não quebrável
+        } else {
+          el.textContent = 'R\u00A00,00';
+        }
+        // Reseta classes de cor do saldo mensal
+        if (el.id === 'monthBalance') {
+          el.className = 'value balance'; // Volta para a classe padrão
+        }
+      });
+
+      // Define o ano e mês atuais no clone
+      const currentYear = new Date().getFullYear();
+      const currentMonth = new Date().getMonth() + 1;
+      const yearInputClone = clonedDocument.getElementById('yearInput');
+      const monthSelectClone = clonedDocument.getElementById('monthSelect');
+      const yearDisplayClone = clonedDocument.getElementById('currentYearDisplay');
+      if (yearInputClone) yearInputClone.value = currentYear;
+      if (monthSelectClone) monthSelectClone.value = currentMonth;
+      if (yearDisplayClone) yearDisplayClone.textContent = currentYear;
+
+
+      // 4. Encontra e limpa todas as listas de itens no clone
+      const itemLists = clonedDocument.querySelectorAll('.item-list');
+      itemLists.forEach(list => {
+        list.innerHTML = '<!-- Itens aqui -->';
+      });
+
+      // 5. Esconde os resumos anual e geral no clone
+      const annualSummaryClone = clonedDocument.getElementById('annualSummary');
+      const totalSummaryClone = clonedDocument.getElementById('totalSummary');
+      if (annualSummaryClone) annualSummaryClone.style.display = 'none';
+      if (totalSummaryClone) totalSummaryClone.style.display = 'none';
+
+
+      // 6. Pega o HTML completo do clone modificado
+      //    Usa outerHTML do elemento html do clone
+      const emptyHtml = clonedDocument.documentElement.outerHTML;
+
+      // 7. Cria e baixa o arquivo limpo
+      const blob = new Blob([emptyHtml], { type: 'text/html;charset=utf-8' }); // Adiciona charset
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = "Sistema Financeiro (Vazio).html";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+
+
+    // Obter chave do mês atual
+    function getCurrentMonthKey() {
+      const month = document.getElementById('monthSelect').value;
+      const year = document.getElementById('yearInput').value;
+      // Valida se ano e mês são válidos antes de criar a chave
+      if (year && month && year >= 2000 && month >= 1 && month <= 12) {
+        return `${year}-${month}`;
+      }
+      // Retorna uma chave padrão ou null se inválido
+      console.error("Ano ou mês inválido selecionado.");
+      const now = new Date();
+      return `${now.getFullYear()}-${now.getMonth() + 1}`; // Fallback para mês/ano atual
+    }
+
+
+    // Inicializar mês
+    function initializeMonth(monthKey) {
+      // Verifica se a chave é válida antes de inicializar
+      if (!monthKey || typeof monthKey !== 'string' || !monthKey.includes('-')) return;
+
+      if (!financialData[monthKey]) {
+        financialData[monthKey] = {
+          incomeFixed: [],
+          incomeVariable: [],
+          fixedExpense: [],
+          eventualExpense: []
+        };
+      }
+      // Garante que todos os arrays existam mesmo se os dados carregados forem incompletos
+      if (!Array.isArray(financialData[monthKey].incomeFixed)) financialData[monthKey].incomeFixed = [];
+      if (!Array.isArray(financialData[monthKey].incomeVariable)) financialData[monthKey].incomeVariable = [];
+      if (!Array.isArray(financialData[monthKey].fixedExpense)) financialData[monthKey].fixedExpense = [];
+      if (!Array.isArray(financialData[monthKey].eventualExpense)) financialData[monthKey].eventualExpense = [];
+    }
+
+
+    // Gerar ID único
+    function generateId() {
+      // Usa crypto.randomUUID se disponível para IDs mais robustos
+      if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+        return crypto.randomUUID();
+      }
+      // Fallback para o método antigo
+      return Date.now() + Math.random();
+    }
+
+
+    // Formatação de moeda
+    function formatCurrency(value) {
+      const numValue = Number(value);
+      if (isNaN(numValue)) {
+        // Retorna um valor formatado como zero se a entrada não for um número
+        return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(0);
+      }
+      return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(numValue);
+    }
+
+
+
+    // Renderizar itens
+    function renderItems() {
+      const monthKey = getCurrentMonthKey();
+      if (!monthKey) return; // Não renderiza se a chave for inválida
+
+      initializeMonth(monthKey); // Garante que a estrutura do mês exista
+
+      const monthData = financialData[monthKey];
+
+      ['incomeFixed', 'incomeVariable', 'fixedExpense', 'eventualExpense'].forEach(type => {
+        const listElement = document.getElementById(`${type}List`);
+        if (!listElement) {
+          console.error(`Elemento com ID ${type}List não encontrado!`);
+          return;
+        }
+        listElement.innerHTML = ''; // Limpa a lista existente sempre
+
+        const valueClass = (type.includes('income')) ? 'income' : 'expense';
+
+        // monthData[type] é garantido ser um array por initializeMonth
+        monthData[type].forEach(item => {
+          // Validação mais robusta do item
+          if (item && typeof item === 'object' && item.id && typeof item.desc === 'string' && typeof item.value === 'number' && !isNaN(item.value)) {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'item';
+            // Escapa HTML na descrição para segurança básica
+            const safeDesc = item.desc.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            itemDiv.innerHTML = `
+                            <span class="item-name">${safeDesc}</span>
+                            <span class="item-value ${valueClass}"
+                                  onclick="editValue('${String(item.id)}', '${type}')">${formatCurrency(item.value)}</span>
+                            <div class="item-actions">
+                                <button class="edit-btn" onclick="editItem('${String(item.id)}', '${type}')">✏️</button>
+                                <button class="delete-btn" onclick="removeItem('${String(item.id)}', '${type}')">🗑️</button>
+                            </div>
+                        `;
+            listElement.appendChild(itemDiv);
+          } else {
+            console.warn("Item inválido encontrado e ignorado:", item);
+            // Opcional: Remover item inválido dos dados?
+            // financialData[monthKey][type] = financialData[monthKey][type].filter(i => i !== item);
+            // saveData(); // Se decidir remover
+          }
+        });
+      });
+
+      updateTotals();
+      updateAnnualSummary();
+      updateGlobalSummary();
+    }
+
+
+    // Atualizar totais
+    function updateTotals() {
+      const monthKey = getCurrentMonthKey();
+      if (!monthKey || !financialData || !financialData[monthKey]) {
+        // Zera todos os totais se não houver dados
+        ['totalIncomeFixed', 'totalIncomeVariable', 'totalFixedExpense', 'totalEventualExpense', 'monthBalance'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.textContent = formatCurrency(0);
+        });
+        ['incomeFixedTotal', 'incomeVariableTotal', 'fixedExpenseTotal', 'eventualExpenseTotal'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.textContent = `Total: ${formatCurrency(0)}`;
+        });
+        const balanceEl = document.getElementById('monthBalance');
+        if (balanceEl) balanceEl.className = 'value balance';
+        return;
+      }
+
+      const monthData = financialData[monthKey];
+
+      // Usar Number() e || 0 para garantir que são números
+      const totalIncomeFixed = (monthData.incomeFixed || []).reduce((sum, item) => sum + (Number(item.value) || 0), 0);
+      const totalIncomeVariable = (monthData.incomeVariable || []).reduce((sum, item) => sum + (Number(item.value) || 0), 0);
+      const totalFixedExpense = (monthData.fixedExpense || []).reduce((sum, item) => sum + (Number(item.value) || 0), 0);
+      const totalEventualExpense = (monthData.eventualExpense || []).reduce((sum, item) => sum + (Number(item.value) || 0), 0);
+
+      const totalIncome = totalIncomeFixed + totalIncomeVariable;
+      const totalExpense = totalFixedExpense + totalEventualExpense;
+      const monthBalance = totalIncome - totalExpense;
+
+      document.getElementById('totalIncomeFixed').textContent = formatCurrency(totalIncomeFixed);
+      document.getElementById('totalIncomeVariable').textContent = formatCurrency(totalIncomeVariable);
+      document.getElementById('totalFixedExpense').textContent = formatCurrency(totalFixedExpense);
+      document.getElementById('totalEventualExpense').textContent = formatCurrency(totalEventualExpense);
+      document.getElementById('monthBalance').textContent = formatCurrency(monthBalance);
+
+      document.getElementById('incomeFixedTotal').textContent = `Total: ${formatCurrency(totalIncomeFixed)}`;
+      document.getElementById('incomeVariableTotal').textContent = `Total: ${formatCurrency(totalIncomeVariable)}`;
+      document.getElementById('fixedExpenseTotal').textContent = `Total: ${formatCurrency(totalFixedExpense)}`;
+      document.getElementById('eventualExpenseTotal').textContent = `Total: ${formatCurrency(totalEventualExpense)}`;
+
+      const balanceElement = document.getElementById('monthBalance');
+      balanceElement.className = `value ${monthBalance >= 0 ? 'income' : 'expense'}`;
+    }
+
+    // Calcular e exibir resumo anual
+    function updateAnnualSummary() {
+      const currentYear = document.getElementById('yearInput').value;
+      // Validação básica do ano
+      if (!currentYear || isNaN(Number(currentYear)) || currentYear < 2000) {
+        document.getElementById('annualSummary').style.display = 'none';
+        return;
+      }
+      document.getElementById('currentYearDisplay').textContent = currentYear;
+
+
+      let annualIncomeFixed = 0, annualIncomeVariable = 0, annualFixedExpense = 0, annualEventualExpense = 0;
+      let hasDataForYear = false;
+
+      for (let month = 1; month <= 12; month++) {
+        const monthKey = `${currentYear}-${month}`;
+        if (financialData[monthKey]) {
+          hasDataForYear = true;
+          const monthData = financialData[monthKey];
+          // Soma segura com Number() e || 0
+          annualIncomeFixed += (monthData.incomeFixed || []).reduce((sum, item) => sum + (Number(item.value) || 0), 0);
+          annualIncomeVariable += (monthData.incomeVariable || []).reduce((sum, item) => sum + (Number(item.value) || 0), 0);
+          annualFixedExpense += (monthData.fixedExpense || []).reduce((sum, item) => sum + (Number(item.value) || 0), 0);
+          annualEventualExpense += (monthData.eventualExpense || []).reduce((sum, item) => sum + (Number(item.value) || 0), 0);
+        }
+      }
+
+      const annualTotalIncome = annualIncomeFixed + annualIncomeVariable;
+      const annualTotalExpense = annualFixedExpense + annualEventualExpense;
+      const annualBalance = annualTotalIncome - annualTotalExpense;
+
+      document.getElementById('annualIncomeFixed').textContent = formatCurrency(annualIncomeFixed);
+      document.getElementById('annualIncomeVariable').textContent = formatCurrency(annualIncomeVariable);
+      document.getElementById('annualFixedExpense').textContent = formatCurrency(annualFixedExpense);
+      document.getElementById('annualEventualExpense').textContent = formatCurrency(annualEventualExpense);
+      document.getElementById('annualBalance').textContent = formatCurrency(annualBalance);
+
+      const annualSummaryElement = document.getElementById('annualSummary');
+      // Mostra apenas se houver dados E algum valor for diferente de zero
+      const hasValues = annualIncomeFixed !== 0 || annualIncomeVariable !== 0 || annualFixedExpense !== 0 || annualEventualExpense !== 0;
+      annualSummaryElement.style.display = hasDataForYear && hasValues ? 'block' : 'none';
+    }
+
+
+    // Resumo Geral (Todos os Anos)
+    function updateGlobalSummary() {
+      let globalIncomeFixed = 0, globalIncomeVariable = 0, globalFixedExpense = 0, globalEventualExpense = 0;
+      const keys = Object.keys(financialData);
+      let hasAnyData = keys.length > 0;
+
+      keys.forEach(monthKey => {
+        const monthData = financialData[monthKey];
+        if (monthData) { // Verifica se monthData existe
+          // Soma segura
+          globalIncomeFixed += (monthData.incomeFixed || []).reduce((sum, item) => sum + (Number(item.value) || 0), 0);
+          globalIncomeVariable += (monthData.incomeVariable || []).reduce((sum, item) => sum + (Number(item.value) || 0), 0);
+          globalFixedExpense += (monthData.fixedExpense || []).reduce((sum, item) => sum + (Number(item.value) || 0), 0);
+          globalEventualExpense += (monthData.eventualExpense || []).reduce((sum, item) => sum + (Number(item.value) || 0), 0);
+        }
+      });
+
+      const globalTotalIncome = globalIncomeFixed + globalIncomeVariable;
+      const globalTotalExpense = globalFixedExpense + globalEventualExpense;
+      const globalBalance = globalTotalIncome - globalTotalExpense;
+
+      document.getElementById('globalIncomeFixed').textContent = formatCurrency(globalIncomeFixed);
+      document.getElementById('globalIncomeVariable').textContent = formatCurrency(globalIncomeVariable);
+      document.getElementById('globalFixedExpense').textContent = formatCurrency(globalFixedExpense);
+      document.getElementById('globalEventualExpense').textContent = formatCurrency(globalEventualExpense);
+      document.getElementById('globalBalance').textContent = formatCurrency(globalBalance);
+
+      const totalSummaryElement = document.getElementById('totalSummary');
+      const hasValues = globalIncomeFixed !== 0 || globalIncomeVariable !== 0 || globalFixedExpense !== 0 || globalEventualExpense !== 0;
+      totalSummaryElement.style.display = hasAnyData && hasValues ? 'block' : 'none';
+    }
+
+
+
+    // Mostrar formulário de adição
+    function showAddForm(type) {
+      const form = document.getElementById(`${type}Form`);
+      if (form) {
+        form.style.display = 'block';
+        // Foca no primeiro campo do formulário
+        const firstInput = form.querySelector('input');
+        if (firstInput) firstInput.focus();
+      } else {
+        console.error(`Formulário ${type}Form não encontrado.`);
+      }
+    }
+
+
+    // Esconder formulário
+    function hideAddForm(type) {
+      const form = document.getElementById(`${type}Form`);
+      if (form) {
+        form.style.display = 'none';
+        // Limpa os campos
+        const descInput = document.getElementById(`${type}Desc`);
+        const valueInput = document.getElementById(`${type}Value`);
+        if (descInput) descInput.value = '';
+        if (valueInput) valueInput.value = '';
+      }
+    }
+
+
+    // Adicionar item
+    function addItem(type) {
+      const descInput = document.getElementById(`${type}Desc`);
+      const valueInput = document.getElementById(`${type}Value`);
+      const desc = descInput ? descInput.value.trim() : '';
+      const value = valueInput ? parseFloat(valueInput.value) : NaN;
+
+      // Validação mais clara
+      if (!desc) {
+        showCustomAlert('Por favor, preencha a descrição.');
+        if (descInput) descInput.focus();
+        return;
+      }
+      if (isNaN(value) || value <= 0) {
+        showCustomAlert('Por favor, insira um valor numérico positivo.');
+        if (valueInput) valueInput.focus();
+        return;
+      }
+
+
+      const monthKey = getCurrentMonthKey();
+      if (!monthKey) return; // Se a chave for inválida, não continua
+
+      initializeMonth(monthKey); // Garante que a estrutura exista
+
+      const newItem = {
+        id: generateId(),
+        desc: desc,
+        value: value
+      };
+
+      // Adiciona ao array correspondente
+      financialData[monthKey][type].push(newItem);
+
+      // Lógica para adicionar item fixo ao próximo mês
+      if (type === 'incomeFixed' || type === 'fixedExpense') {
+        const [yearStr, monthStr] = monthKey.split('-');
+        let year = parseInt(yearStr);
+        let month = parseInt(monthStr);
+
+        let nextMonth = month + 1;
+        let nextYear = year;
+        if (nextMonth > 12) {
+          nextMonth = 1;
+          nextYear = year + 1;
+        }
+        const nextMonthKey = `${nextYear}-${nextMonth}`;
+
+        initializeMonth(nextMonthKey); // Garante que o próximo mês e seus arrays existam
+
+        // Verifica se já existe item com mesma descrição no próximo mês
+        const existsInNextMonth = financialData[nextMonthKey][type].some(item => item && item.desc === newItem.desc);
+
+        if (!existsInNextMonth) {
+          const forwardedItem = { ...newItem, id: generateId() }; // Cria cópia com novo ID
+          financialData[nextMonthKey][type].push(forwardedItem);
+        }
+      }
+
+      saveData(); // Salva os dados atualizados
+      renderItems(); // Re-renderiza a interface
+      hideAddForm(type); // Esconde e limpa o formulário
+    }
+
+    // Editar item (descrição)
+    function editItem(id, type) {
+      const monthKey = getCurrentMonthKey();
+      if (!monthKey || !financialData[monthKey] || !financialData[monthKey][type]) return;
+
+      const item = financialData[monthKey][type].find(i => i && String(i.id) === String(id)); // Comparar como string
+
+
+      if (item) {
+        showCustomPrompt('Nova descrição:', item.desc, (newDesc) => {
+          if (newDesc !== null) { // Permite string vazia se o usuário quiser limpar
+            const trimmedDesc = newDesc.trim();
+            if (trimmedDesc) { // Salva apenas se não for vazio após trim
+              item.desc = trimmedDesc;
+              saveData();
+              renderItems();
+            } else {
+              showCustomAlert("A descrição não pode ficar vazia.");
+            }
+          }
+          // Se newDesc for null (cancelou), não faz nada
+        });
+      } else {
+        console.error(`Item com ID ${id} não encontrado em ${type}`);
+      }
+    }
+
+
+    // Editar valor diretamente
+    function editValue(id, type) {
+      const monthKey = getCurrentMonthKey();
+      if (!monthKey || !financialData[monthKey] || !financialData[monthKey][type]) return;
+
+      const item = financialData[monthKey][type].find(i => i && String(i.id) === String(id)); // Comparar como string
+
+
+      if (item) {
+        const existingModal = document.getElementById('editValueModal');
+        if (existingModal) existingModal.remove();
+
+        const modalHTML = `
+                <div id="editValueModal" class="confirm-modal" style="display: flex;">
+                    <div class="confirm-content">
+                        <h3>✏️ Editar Valor</h3>
+                        <p><strong>${item.desc.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</strong></p>
+                        <p>Valor atual: ${formatCurrency(item.value)}</p>
+                        <div style="margin: 20px 0;">
+                            <div style="display: flex; gap: 5px; margin-bottom: 10px;">
+                                <div style="display: flex; border: 1px solid #ddd; border-radius: 6px; overflow: hidden;">
+                                    <button type="button" id="editAddBtn" style="padding: 8px 12px; border: none; background: #3498db; color: white; cursor: pointer; font-weight: bold;">+</button>
+                                    <button type="button" id="editSubtractBtn" style="padding: 8px 12px; border: none; background: #f8f9fa; cursor: pointer; font-weight: bold;">-</button>
+                                </div>
+                                <input type="number" id="editValueInput" placeholder="Valor (R$)" step="0.01" min="0" style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 6px;">
+                            </div>
+                            <div style="font-size: 12px; color: #666;">Use +/- e valor OU digite novo valor total.</div>
+                        </div>
+                        <div class="confirm-buttons">
+                            <button id="saveEditBtn" class="save-btn" style="flex: 1;">Salvar</button>
+                            <button type="button" id="cancelEditBtn" class="cancel-btn" style="flex: 1;">Cancelar</button>
+                        </div>
+                    </div>
+                </div>`;
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+        let currentEditOperation = 'set'; // 'set', 'add', 'subtract'
+        const addBtn = document.getElementById('editAddBtn');
+        const subtractBtn = document.getElementById('editSubtractBtn');
+        const input = document.getElementById('editValueInput');
+        const saveBtn = document.getElementById('saveEditBtn');
+        const cancelBtn = document.getElementById('cancelEditBtn');
+        const modalElement = document.getElementById('editValueModal');
+
+        const closeModal = () => {
+          if (modalElement) modalElement.remove();
+          document.removeEventListener('keydown', escapeHandler);
+        };
+
+        addBtn.onclick = () => {
+          currentEditOperation = 'add'; input.placeholder = "Valor a somar (R$)";
+          addBtn.style.background = '#2980b9'; addBtn.style.color = 'white';
+          subtractBtn.style.background = '#f8f9fa'; subtractBtn.style.color = 'black';
+        };
+        subtractBtn.onclick = () => {
+          currentEditOperation = 'subtract'; input.placeholder = "Valor a subtrair (R$)";
+          subtractBtn.style.background = '#c0392b'; subtractBtn.style.color = 'white';
+          addBtn.style.background = '#f8f9fa'; addBtn.style.color = 'black';
+        };
+        // Se começar a digitar, assume que é um novo valor total
+        input.oninput = () => {
+          currentEditOperation = 'set'; input.placeholder = "Novo valor total (R$)";
+          addBtn.style.background = '#f8f9fa'; addBtn.style.color = 'black';
+          subtractBtn.style.background = '#f8f9fa'; subtractBtn.style.color = 'black';
+        };
+
+
+        setTimeout(() => input.focus(), 100);
+
+        saveBtn.onclick = () => {
+          const inputValue = parseFloat(input.value);
+          if (isNaN(inputValue) || inputValue < 0) {
+            showCustomAlert('Digite um valor numérico válido e não negativo!');
+            return;
+          }
+
+          const currentValue = Number(item.value) || 0;
+          let newValue;
+
+          if (currentEditOperation === 'add') {
+            newValue = currentValue + inputValue;
+          } else if (currentEditOperation === 'subtract') {
+            newValue = currentValue - inputValue;
+            if (newValue < 0) newValue = 0;
+          } else { // currentEditOperation === 'set'
+            newValue = inputValue;
+          }
+
+          item.value = newValue;
+          saveData();
+          renderItems();
+          closeModal();
+        };
+
+        cancelBtn.onclick = closeModal;
+
+        const escapeHandler = (e) => { if (e.key === 'Escape') closeModal(); };
+        document.addEventListener('keydown', escapeHandler);
+        modalElement.addEventListener('click', (event) => { if (event.target === modalElement) closeModal(); });
+      } else {
+        console.error(`Item com ID ${id} não encontrado em ${type}`);
+      }
+    }
+
+
+
+    // Remover item
+    function removeItem(id, type) {
+      showConfirm(`Tem certeza que deseja excluir este item?`, () => {
+        const monthKey = getCurrentMonthKey();
+        if (!monthKey || !financialData[monthKey] || !financialData[monthKey][type]) return;
+
+        const initialLength = financialData[monthKey][type].length;
+        // Filtra o array, mantendo apenas os itens cujo ID NÃO é o que queremos remover
+        financialData[monthKey][type] = financialData[monthKey][type].filter(item => item && String(item.id) !== String(id));
+
+        // Verifica se algo foi realmente removido
+        if (financialData[monthKey][type].length < initialLength) {
+          saveData();
+          renderItems();
+        } else {
+          console.warn(`Item com ID ${id} não encontrado para exclusão em ${type}`);
+        }
+      });
+    }
+
+
+
+    // Mostrar histórico
+    function showHistory() {
+      const historyList = document.getElementById('historyList');
+      const historyModal = document.getElementById('historyModal'); // Referência ao modal
+      if (!historyList || !historyModal) return; // Sai se elementos não existem
+
+      historyList.innerHTML = ''; // Limpa antes de preencher
+
+      const monthNames = { 1: 'Janeiro', 2: 'Fevereiro', 3: 'Março', 4: 'Abril', 5: 'Maio', 6: 'Junho', 7: 'Julho', 8: 'Agosto', 9: 'Setembro', 10: 'Outubro', 11: 'Novembro', 12: 'Dezembro' };
+
+      const sortedKeys = Object.keys(financialData).sort((a, b) => {
+        const [yearA, monthA] = a.split('-').map(Number);
+        const [yearB, monthB] = b.split('-').map(Number);
+        return yearB - yearA || monthB - monthA;
+      });
+
+      if (sortedKeys.length === 0) {
+        historyList.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">Nenhum histórico encontrado.</p>';
+      } else {
+        sortedKeys.forEach(monthKey => {
+          const [year, month] = monthKey.split('-');
+          // Validação básica da chave antes de processar
+          if (isNaN(year) || isNaN(month) || !monthNames[month]) return;
+
+          const monthData = financialData[monthKey];
+          if (!monthData) return; // Pula se monthData for inválido
+
+          const totalIncome = ((monthData.incomeFixed || []).reduce((sum, item) => sum + (Number(item.value) || 0), 0)) +
+            ((monthData.incomeVariable || []).reduce((sum, item) => sum + (Number(item.value) || 0), 0));
+          const totalExpense = ((monthData.fixedExpense || []).reduce((sum, item) => sum + (Number(item.value) || 0), 0)) +
+            ((monthData.eventualExpense || []).reduce((sum, item) => sum + (Number(item.value) || 0), 0));
+          const balance = totalIncome - totalExpense;
+
+          const historyItem = document.createElement('div');
+          historyItem.className = 'history-item';
+          historyItem.innerHTML = `
+                        <div onclick="loadMonth('${monthKey}')" style="flex-grow: 1; cursor: pointer; padding-right: 15px;"> <!-- Adiciona padding -->
+                            <strong>${monthNames[month]} ${year}</strong><br>
+                            <small>Entradas: ${formatCurrency(totalIncome)} | Saídas: ${formatCurrency(totalExpense)} | Saldo:
+                            <span class="${balance >= 0 ? 'income' : 'expense'}">${formatCurrency(balance)}</span></small>
+                        </div>
+                        <div class="history-actions">
+                             <!-- Passa event para evitar propagação e fechar o modal -->
+                            <button class="delete-month-btn" onclick="event.stopPropagation(); deleteMonth('${monthKey}', '${monthNames[month]} ${year}')">🗑️ Excluir</button>
+                        </div>
+                    `;
+          historyList.appendChild(historyItem);
+        });
+      }
+
+      historyModal.style.display = 'block'; // Mostra o modal
+    }
+
+
+    // Carregar mês específico
+    function loadMonth(monthKey) {
+      const [year, month] = monthKey.split('-');
+      // Validação
+      if (isNaN(year) || isNaN(month) || year < 2000 || month < 1 || month > 12) {
+        console.error("Tentativa de carregar mês/ano inválido:", monthKey);
+        return;
+      }
+      document.getElementById('yearInput').value = year;
+      document.getElementById('monthSelect').value = month;
+      renderItems(); // Re-renderiza a interface com os dados do mês carregado
+      closeHistory(); // Fecha o modal do histórico
+    }
+
+
+    // Excluir mês
+    function deleteMonth(monthKey, monthName) {
+      showConfirm(`Tem certeza que deseja excluir todos os dados de ${monthName}? Esta ação não pode ser desfeita!`, () => {
+        if (financialData[monthKey]) { // Verifica se a chave existe antes de deletar
+          delete financialData[monthKey];
+          saveData(); // Salva a remoção
+
+          const historyModal = document.getElementById('historyModal');
+          // Se o histórico estiver aberto, atualiza a lista dele
+          if (historyModal && historyModal.style.display === 'block') {
+            showHistory();
+          }
+
+          // Se o mês excluído era o que estava sendo exibido na tela principal
+          if (getCurrentMonthKey() === monthKey) {
+            const keys = Object.keys(financialData);
+            if (keys.length > 0) {
+              // Carrega o mês mais recente que sobrou
+              const sortedKeys = keys.sort((a, b) => {
+                const [yearA, monthA] = a.split('-').map(Number);
+                const [yearB, monthB] = b.split('-').map(Number);
+                return yearB - yearA || monthB - monthA;
+              });
+              loadMonth(sortedKeys[0]);
+            } else {
+              // Se não sobrou nenhum dado, reseta para o mês/ano atual e renderiza vazio
+              const now = new Date();
+              document.getElementById('yearInput').value = now.getFullYear();
+              document.getElementById('monthSelect').value = now.getMonth() + 1;
+              renderItems(); // Vai inicializar e mostrar o mês vazio
+            }
+          } else {
+            // Se excluiu um mês diferente, apenas atualiza os resumos gerais/anuais
+            updateAnnualSummary();
+            updateGlobalSummary();
+          }
+        } else {
+          console.warn(`Tentativa de excluir um mês inexistente: ${monthKey}`);
+        }
+      });
+    }
+
+
+
+    // Fechar histórico
+    function closeHistory() {
+      const historyModal = document.getElementById('historyModal');
+      if (historyModal) historyModal.style.display = 'none';
+    }
+
+
+    // Sistema de confirmação (MODAL CUSTOMIZADO)
+    function showConfirm(message, callback) {
+      const existingModal = document.getElementById('confirmModal');
+      if (existingModal) existingModal.remove();
+
+      const modalHTML = `
+                <div id="confirmModal" class="confirm-modal" style="display: flex;">
+                    <div class="confirm-content">
+                        <h3>⚠️ Confirmação</h3>
+                        <p>${message.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>
+                        <div class="confirm-buttons">
+                            <button class="confirm-yes">Sim</button>
+                            <button type="button" class="confirm-no">Cancelar</button>
+                        </div>
+                    </div>
+                </div>`;
+      document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+      const modalElement = document.getElementById('confirmModal');
+      const yesBtn = modalElement.querySelector('.confirm-yes');
+      const noBtn = modalElement.querySelector('.confirm-no');
+
+      let localCallback = callback; // Armazena o callback localmente
+
+      const close = () => {
+        if (modalElement) modalElement.remove();
+        document.removeEventListener('keydown', escConfirmHandler);
+        localCallback = null; // Limpa o callback local
+      };
+
+
+      yesBtn.onclick = () => {
+        if (localCallback) {
+          localCallback(); // Executa o callback armazenado
+        }
+        close();
+      };
+
+      noBtn.onclick = close;
+
+      const escConfirmHandler = (e) => { if (e.key === 'Escape') close(); };
+      document.addEventListener('keydown', escConfirmHandler);
+      modalElement.addEventListener('click', (event) => { if (event.target === modalElement) close(); });
+      // Foca no botão "Não" por padrão
+      setTimeout(() => noBtn.focus(), 50);
+    }
+
+    // Alerta customizado
+    function showCustomAlert(message) {
+      const existingModal = document.getElementById('alertModal');
+      if (existingModal) existingModal.remove();
+
+      const modalHTML = `
+                <div id="alertModal" class="confirm-modal" style="display: flex;">
+                    <div class="confirm-content">
+                        <h3>ℹ️ Aviso</h3>
+                        <p>${message.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>
+                        <div class="confirm-buttons" style="justify-content: center;">
+                            <button type="button" class="confirm-no" style="background-color: #3498db; min-width: 80px;">OK</button>
+                        </div>
+                    </div>
+                </div>`;
+      document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+      const modalElement = document.getElementById('alertModal');
+      const okBtn = modalElement.querySelector('.confirm-no');
+
+      const close = () => { if (modalElement) modalElement.remove(); document.removeEventListener('keydown', escAlertHandler); };
+      okBtn.onclick = close;
+      const escAlertHandler = (e) => { if (e.key === 'Escape') close(); };
+      document.addEventListener('keydown', escAlertHandler);
+      modalElement.addEventListener('click', (event) => { if (event.target === modalElement) close(); });
+      setTimeout(() => okBtn.focus(), 50);
+    }
+
+
+    // Prompt customizado
+    function showCustomPrompt(message, defaultValue, callback) {
+      const existingModal = document.getElementById('promptModal');
+      if (existingModal) existingModal.remove();
+
+      // Sanitiza defaultValue para evitar XSS
+      const safeDefaultValue = (defaultValue || '').replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+
+      const modalHTML = `
+                <div id="promptModal" class="confirm-modal" style="display: flex;">
+                    <div class="confirm-content">
+                        <h3>✏️ Entrada</h3>
+                        <p>${message.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>
+                        <input type="text" id="promptInput" value="${safeDefaultValue}" style="width: 100%; padding: 8px; margin-top: 15px; border: 1px solid #ddd; border-radius: 6px;">
+                        <div class="confirm-buttons">
+                            <button class="confirm-yes save-btn" style="flex: 1;">Salvar</button> <!-- Usa classe save-btn -->
+                            <button type="button" class="confirm-no" style="flex: 1;">Cancelar</button>
+                        </div>
+                    </div>
+                </div>`;
+      document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+      const modalElement = document.getElementById('promptModal');
+      const input = modalElement.querySelector('#promptInput');
+      const saveBtn = modalElement.querySelector('.confirm-yes');
+      const cancelBtn = modalElement.querySelector('.confirm-no');
+
+      let localCallback = callback;
+
+      const close = () => { if (modalElement) modalElement.remove(); document.removeEventListener('keydown', escPromptHandler); document.removeEventListener('keydown', enterPromptHandler); localCallback = null; };
+
+      saveBtn.onclick = () => {
+        if (localCallback) localCallback(input.value); // Passa o valor do input
+        close();
+      };
+
+      cancelBtn.onclick = () => {
+        if (localCallback) localCallback(null); // Passa null se cancelar
+        close();
+      };
+
+      // Handlers de teclado específicos para este prompt
+      const escPromptHandler = (e) => { if (e.key === 'Escape') cancelBtn.click(); };
+      const enterPromptHandler = (e) => { if (e.key === 'Enter' && document.activeElement === input) { e.preventDefault(); saveBtn.click(); } }; // Só salva com Enter se o foco estiver no input
+      document.addEventListener('keydown', escPromptHandler);
+      document.addEventListener('keydown', enterPromptHandler);
+
+      modalElement.addEventListener('click', (event) => { if (event.target === modalElement) cancelBtn.click(); });
+      setTimeout(() => { input.focus(); input.select(); }, 50); // Foca e seleciona o texto
+    }
+
+
+
+
+    // Eventos de mudança de mês/ano
+    document.getElementById('monthSelect').addEventListener('change', renderItems);
+    document.getElementById('yearInput').addEventListener('change', renderItems);
+
+
+    // Eventos de teclado globais
+    document.addEventListener('keydown', function (event) {
+      // Escape: Fecha forms abertos ou o histórico (prioridade pro form)
+      if (event.key === 'Escape') {
+        let didAction = false;
+        // Tenta fechar forms primeiro
+        ['incomeFixed', 'incomeVariable', 'fixedExpense', 'eventualExpense'].forEach(type => {
+          const form = document.getElementById(`${type}Form`);
+          if (form && form.style.display === 'block') {
+            hideAddForm(type);
+            didAction = true;
+          }
+        });
+        // Se não fechou form, tenta fechar histórico
+        if (!didAction) {
+          const historyModal = document.getElementById('historyModal');
+          if (historyModal && historyModal.style.display === 'block') {
+            closeHistory();
+            didAction = true;
+          }
+        }
+        // Modais já têm seu próprio handler de Esc
+      }
+      // Enter: Submete forms ou clica em botões de modal
+      else if (event.key === 'Enter') {
+        let formSubmitted = false;
+        // Verifica forms
+        ['incomeFixed', 'incomeVariable', 'fixedExpense', 'eventualExpense'].forEach(type => {
+          const form = document.getElementById(`${type}Form`);
+          if (form && form.style.display === 'block') {
+            const descInput = document.getElementById(`${type}Desc`);
+            const valueInput = document.getElementById(`${type}Value`);
+            if (document.activeElement === descInput || document.activeElement === valueInput) {
+              event.preventDefault(); addItem(type); formSubmitted = true;
+            }
+          }
+        });
+        if (formSubmitted) return;
+
+        // Verifica modais (foco no botão relevante)
+        const alertModal = document.getElementById('alertModal');
+        if (alertModal && document.activeElement === alertModal.querySelector('.confirm-no')) { event.preventDefault(); alertModal.querySelector('.confirm-no').click(); return; }
+        const promptModal = document.getElementById('promptModal');
+        if (promptModal && document.activeElement === promptModal.querySelector('.confirm-yes')) { event.preventDefault(); promptModal.querySelector('.confirm-yes').click(); return; }
+        // Enter no input do prompt também salva
+        if (promptModal && document.activeElement === promptModal.querySelector('#promptInput')) { event.preventDefault(); promptModal.querySelector('.confirm-yes').click(); return; }
+        const confirmModal = document.getElementById('confirmModal');
+        if (confirmModal && document.activeElement === confirmModal.querySelector('.confirm-yes')) { event.preventDefault(); confirmModal.querySelector('.confirm-yes').click(); return; }
+        // Enter no botão Não/Cancelar do confirm/prompt clica nele
+        if (confirmModal && document.activeElement === confirmModal.querySelector('.confirm-no')) { event.preventDefault(); confirmModal.querySelector('.confirm-no').click(); return; }
+        if (promptModal && document.activeElement === promptModal.querySelector('.confirm-no')) { event.preventDefault(); promptModal.querySelector('.confirm-no').click(); return; }
+
+      }
+    });
+
+
+    // Inicialização
+    document.addEventListener('DOMContentLoaded', function () {
+      loadData(); // Carrega os dados primeiro
+
+      const currentYear = new Date().getFullYear();
+      const currentMonth = new Date().getMonth() + 1;
+      const yearInput = document.getElementById('yearInput');
+      const monthSelect = document.getElementById('monthSelect');
+
+
+      if (Object.keys(financialData).length === 0) {
+        // Se dados vazios, define para mês/ano atual
+        yearInput.value = currentYear;
+        monthSelect.value = currentMonth;
+      } else {
+        // Se tem dados, encontra a chave mais recente
+        const keys = Object.keys(financialData);
+        const sortedKeys = keys.sort((a, b) => {
+          const [yearA, monthA] = a.split('-').map(Number);
+          const [yearB, monthB] = b.split('-').map(Number);
+          // Validação dentro do sort
+          if (isNaN(yearA) || isNaN(monthA)) return 1; // Coloca inválidos no final
+          if (isNaN(yearB) || isNaN(monthB)) return -1;
+          return yearB - yearA || monthB - monthA; // Ordena DESC
+        });
+        // Pega a primeira chave válida
+        const latestValidKey = sortedKeys.find(key => key.includes('-') && key.split('-').length === 2 && !isNaN(key.split('-')[0]) && !isNaN(key.split('-')[1]));
+
+        if (latestValidKey) {
+          const [latestYear, latestMonth] = latestValidKey.split('-');
+          yearInput.value = latestYear;
+          monthSelect.value = latestMonth;
+        } else {
+          // Se todas as chaves forem inválidas, usa data atual
+          yearInput.value = currentYear;
+          monthSelect.value = currentMonth;
+        }
+      }
+
+      renderItems(); // Renderiza o mês/ano selecionado
+    });
+
+
+    // Auto-save periódico
+    setInterval(saveData, 30000); // Salva a cada 30 segundos
+
+  </script>
+
+  <!--
+    Dados financeiros embutidos no HTML
+    -->
+  <script id="financialDataStorage" type="application/json">
+
+    </script>
+
+</body>
+
+</html>

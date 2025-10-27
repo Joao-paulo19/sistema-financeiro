@@ -26,6 +26,10 @@ Este sistema é um **arquivo HTML único e autônomo**:
 
 > **Resumindo:** Cada vez que salva, você cria uma nova "versão" do seu sistema com os dados atualizados. Sempre utilize o último arquivo baixado!
 
+> ## Imagem de Exemplo
+
+![Captura de Tela](imagem.png)
+
 ## Como Usar
 
 1.  Salve o código HTML como um arquivo `Sistema Financeiro.html` (ou qualquer nome `.html`).

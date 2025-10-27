@@ -1,46 +1,47 @@
 # Sistema Financeiro Pessoal
 
-Este é um projeto simples em HTML, CSS e JavaScript que permite o controle financeiro pessoal, com entradas e saídas mensais/eventuais e resumo anual.
+Este é um projeto simples em HTML, CSS e JavaScript que permite o controle financeiro pessoal, separando entradas e saídas em categorias fixas e variáveis/eventuais, com resumos mensais, anuais e gerais.
 
-## Funcionalidades
+## Funcionalidades Principais
 
-- Adição de entradas e despesas
-- Visualização por mês e ano
-- Resumo financeiro mensal e anual
-- Histórico de meses anteriores
-- Interface responsiva e moderna
-- **Não usa servidor nem banco de dados externo**
+* **Lançamentos Detalhados:** Adição de entradas (fixas e variáveis) e despesas (fixas e eventuais).
+* **Visualização Flexível:** Navegação por mês e ano.
+* **Resumos Abrangentes:**
+    * Resumo financeiro mensal detalhado (fixo/variável/eventual).
+    * Resumo anual consolidado para o ano selecionado.
+    * Resumo geral com o total acumulado de todos os anos registrados.
+* **Histórico Completo:** Acesso fácil aos dados de meses anteriores.
+* **Automação Inteligente:** Lançamentos fixos (entradas e saídas) adicionados em um mês são automaticamente replicados para o mês seguinte (apenas para o próximo mês, evitando preenchimento excessivo).
+* **Template Vazio:** Botão para gerar uma cópia limpa do arquivo HTML, ideal para compartilhar ou começar do zero.
+* **Interface Moderna:** Design responsivo que se adapta a diferentes tamanhos de tela.
+* **Independente:** Não requer servidor, banco de dados externo ou instalação. Funciona 100% offline no navegador.
 
-## Como funciona o salvamento
+## Como Funciona o Salvamento (Importante!)
 
-Este projeto é um **arquivo HTML independente**. Isso significa que:
+Este sistema é um **arquivo HTML único e autônomo**:
 
-- **Todos os dados são salvos dentro do próprio HTML**;
-- Quando você clica em **Salvar Arquivo**, um novo arquivo `.html` será baixado;
-- Este novo arquivo contém **todos os seus dados incorporados**;
-- Para continuar usando o sistema com seus lançamentos salvos, **abra esse novo HTML baixado**.
+1.  **Dados Embutidos:** Todas as suas informações financeiras (lançamentos, meses, anos) são salvas diretamente **dentro do código do próprio arquivo HTML** que você está usando.
+2.  **Salvando Alterações:** Ao clicar no botão **💾 Salvar Arquivo**, o navegador fará o download de uma **nova versão** do arquivo `.html`.
+3.  **Continuar Usando:** Este **novo arquivo baixado** contém todas as alterações que você fez. Para continuar de onde parou, você **DEVE ABRIR e USAR ESSE NOVO ARQUIVO** baixado. O arquivo antigo não terá as novas informações.
 
-> Ou seja: **você nunca precisa instalar nada ou usar banco de dados**. Basta abrir o HTML atualizado no navegador.
+> **Resumindo:** Cada vez que salva, você cria uma nova "versão" do seu sistema com os dados atualizados. Sempre utilize o último arquivo baixado!
 
-## Imagem de Exemplo
+## Como Usar
 
-![Captura de Tela](imagem.png)
-
-## Como usar
-
-1. Baixe ou clone este repositório.
-2. Abra o arquivo `index.html` no navegador.
-3. Comece a usar normalmente.
-4. Quando quiser salvar seu progresso, clique em **Salvar Arquivo**.
-5. Um novo `.html` será gerado com seus dados — continue usando por ele.
+1.  Salve o código HTML como um arquivo `Sistema Financeiro.html` (ou qualquer nome `.html`).
+2.  Abra este arquivo no seu navegador de preferência.
+3.  Comece a adicionar suas entradas e saídas nos meses desejados.
+4.  **Sempre que fizer alterações importantes**, clique em **💾 Salvar Arquivo**.
+5.  **Feche o arquivo antigo** e **abra o novo arquivo `.html`** que foi baixado para continuar.
+6.  (Opcional) Use o botão **✨ Gerar Cópia Vazia** para criar um template limpo para compartilhar.
 
 ## Tecnologias
 
-- HTML5
-- CSS3
-- JavaScript Puro (sem bibliotecas externas)
+* HTML5
+* CSS3
+* JavaScript Puro (Vanilla JS - sem bibliotecas ou frameworks externos)
 
 ---
 
-Criado por [João Paulo](https://www.linkedin.com/in/joao-paul0/)  
+Criado por [João Paulo](https://www.linkedin.com/in/joao-paul0/)
 Repositório: [https://github.com/Joao-paulo19](https://github.com/Joao-paulo19)

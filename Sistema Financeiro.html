@@ -629,6 +629,14 @@
       <button class="template-btn" onclick="generateEmptyTemplate()">
         ✨ Gerar Cópia Vazia (Template)
       </button>
+      <button class="template-btn" onclick="exportData()" style="background:#27ae60;margin-left:8px;">
+        📤 Exportar Dados (JSON)
+      </button>
+      <button class="template-btn" onclick="document.getElementById('importFileInput').click()"
+        style="background:#2980b9;margin-left:8px;">
+        📥 Importar Dados (JSON)
+      </button>
+      <input type="file" id="importFileInput" accept=".json" style="display:none;" onchange="importData(event)">
     </div>
 
     <div class="total-summary" id="totalSummary" style="display: none;">
@@ -636,29 +644,29 @@
       <div class="annual-cards">
         <div class="annual-card">
           <h4>Entradas Fixas</h4>
-          <div class="annual-value" id="globalIncomeFixed">R$&nbsp;0,00</div>
+          <div class="annual-value" id="globalIncomeFixed">R&nbsp;0,00</div>
         </div>
         <div class="annual-card">
           <h4>Entradas Variáveis</h4>
-          <div class="annual-value" id="globalIncomeVariable">R$&nbsp;0,00</div>
+          <div class="annual-value" id="globalIncomeVariable">R&nbsp;0,00</div>
         </div>
         <div class="annual-card">
           <h4>Saídas Fixas</h4>
-          <div class="annual-value" id="globalFixedExpense">R$&nbsp;0,00</div>
+          <div class="annual-value" id="globalFixedExpense">R&nbsp;0,00</div>
         </div>
         <div class="annual-card">
           <h4>Saídas Eventuais</h4>
-          <div class="annual-value" id="globalEventualExpense">R$&nbsp;0,00</div>
+          <div class="annual-value" id="globalEventualExpense">R&nbsp;0,00</div>
         </div>
         <div class="annual-card">
           <h4>Saldo Total</h4>
-          <div class="annual-value" id="globalBalance">R$&nbsp;0,00</div>
+          <div class="annual-value" id="globalBalance">R&nbsp;0,00</div>
         </div>
       </div>
     </div>
 
     <div class="annual-summary" id="annualSummary" style="display: none;">
-      <h3>📊 Resumo do Ano <span id="currentYearDisplay">2025</span></h3>
+      <h3>📊 Resumo do Ano <span id="currentYearDisplay">2026</span></h3>
       <div class="annual-cards">
         <div class="annual-card">
           <h4>Entradas Fixas</h4>
@@ -709,29 +717,32 @@
     <div class="summary">
       <div class="summary-card">
         <h3>Total Entradas Fixas</h3>
-        <div class="value income" id="totalIncomeFixed">R$&nbsp;0,00</div>
+        <div class="value income" id="totalIncomeFixed">R&nbsp;0,00</div>
       </div>
       <div class="summary-card">
         <h3>Total Entradas Variáveis</h3>
-        <div class="value income" id="totalIncomeVariable">R$&nbsp;0,00</div>
+        <div class="value income" id="totalIncomeVariable">R&nbsp;0,00</div>
       </div>
       <div class="summary-card">
         <h3>Total Saídas Fixas</h3>
-        <div class="value expense" id="totalFixedExpense">R$&nbsp;0,00</div>
+        <div class="value expense" id="totalFixedExpense">R&nbsp;0,00</div>
       </div>
       <div class="summary-card">
         <h3>Total Saídas Eventuais</h3>
-        <div class="value expense" id="totalEventualExpense">R$&nbsp;0,00</div>
+        <div class="value expense" id="totalEventualExpense">R&nbsp;0,00</div>
       </div>
       <div class="summary-card">
         <h3>Saldo do Mês</h3>
-        <div class="value balance" id="monthBalance">R$&nbsp;0,00</div>
+        <div class="value balance" id="monthBalance">R&nbsp;0,00</div>
       </div>
     </div>
 
     <div class="main-content">
       <div class="section">
-        <h2>📈 Entradas Fixas<button class="add-btn" onclick="showAddForm('incomeFixed')">+ Adicionar</button></h2>
+        <h2>📈 Entradas Fixas<span style="display:flex;gap:6px;align-items:center;"><button class="add-btn"
+              onclick="replicateFixedIncomesToNextMonth()" title="Replicar para o próximo mês"
+              style="background:#16a085;">⏭️ Replicar</button><button class="add-btn"
+              onclick="showAddForm('incomeFixed')">+ Adicionar</button></span></h2>
         <div class="add-form" id="incomeFixedForm" style="display: none;"><input type="text" id="incomeFixedDesc"
             placeholder="Descrição da entrada fixa"><input type="number" id="incomeFixedValue" placeholder="Valor (R$)"
             step="0.01" min="0">
@@ -739,7 +750,7 @@
               type="button" class="cancel-btn" onclick="hideAddForm('incomeFixed')">Cancelar</button></div>
         </div>
         <div id="incomeFixedList" class="item-list"><!-- Itens aqui --></div>
-        <div class="total" id="incomeFixedTotal">Total: R$&nbsp;0,00</div>
+        <div class="total" id="incomeFixedTotal">Total: R&nbsp;0,00</div>
       </div>
       <div class="section">
         <h2>📊 Entradas Variáveis<button class="add-btn" onclick="showAddForm('incomeVariable')">+ Adicionar</button>
@@ -751,10 +762,13 @@
               type="button" class="cancel-btn" onclick="hideAddForm('incomeVariable')">Cancelar</button></div>
         </div>
         <div id="incomeVariableList" class="item-list"><!-- Itens aqui --></div>
-        <div class="total" id="incomeVariableTotal">Total: R$&nbsp;0,00</div>
+        <div class="total" id="incomeVariableTotal">Total: R&nbsp;0,00</div>
       </div>
       <div class="section">
-        <h2>📉 Saídas Fixas<button class="add-btn" onclick="showAddForm('fixedExpense')">+ Adicionar</button></h2>
+        <h2>📉 Saídas Fixas<span style="display:flex;gap:6px;align-items:center;"><button class="add-btn"
+              onclick="replicateFixedExpensesToNextMonth()" title="Replicar para o próximo mês"
+              style="background:#16a085;">⏭️ Replicar</button><button class="add-btn"
+              onclick="showAddForm('fixedExpense')">+ Adicionar</button></span></h2>
         <div class="add-form" id="fixedExpenseForm" style="display: none;"><input type="text" id="fixedExpenseDesc"
             placeholder="Descrição da saída fixa"><input type="number" id="fixedExpenseValue" placeholder="Valor (R$)"
             step="0.01" min="0">
@@ -762,7 +776,7 @@
               type="button" class="cancel-btn" onclick="hideAddForm('fixedExpense')">Cancelar</button></div>
         </div>
         <div id="fixedExpenseList" class="item-list"><!-- Itens aqui --></div>
-        <div class="total" id="fixedExpenseTotal">Total: R$&nbsp;0,00</div>
+        <div class="total" id="fixedExpenseTotal">Total: R&nbsp;0,00</div>
       </div>
       <div class="section">
         <h2>💸 Saídas Eventuais<button class="add-btn" onclick="showAddForm('eventualExpense')">+ Adicionar</button>
@@ -774,7 +788,7 @@
               type="button" class="cancel-btn" onclick="hideAddForm('eventualExpense')">Cancelar</button></div>
         </div>
         <div id="eventualExpenseList" class="item-list"><!-- Itens aqui --></div>
-        <div class="total" id="eventualExpenseTotal">Total: R$&nbsp;0,00</div>
+        <div class="total" id="eventualExpenseTotal">Total: R&nbsp;0,00</div>
       </div>
     </div>
   </div>
@@ -784,7 +798,151 @@
     <div class="history-content">
       <span class="close" onclick="closeHistory()">×</span>
       <h2>📊 Histórico Mensal</h2>
-      <div id="historyList"></div>
+      <div id="historyList">
+        <div class="history-item">
+          <div onclick="loadMonth('2026-3')" style="flex-grow: 1; cursor: pointer; padding-right: 15px;">
+            <!-- Adiciona padding -->
+            <strong>Março 2026</strong><br>
+            <small>Entradas: R$&nbsp;0,00 | Saídas: R$&nbsp;426,84 | Saldo:
+              <span class="expense">-R$&nbsp;426,84</span></small>
+          </div>
+          <div class="history-actions">
+            <!-- Passa event para evitar propagação e fechar o modal -->
+            <button class="delete-month-btn" onclick="event.stopPropagation(); deleteMonth('2026-3', 'Março 2026')">🗑️
+              Excluir</button>
+          </div>
+        </div>
+        <div class="history-item">
+          <div onclick="loadMonth('2026-2')" style="flex-grow: 1; cursor: pointer; padding-right: 15px;">
+            <!-- Adiciona padding -->
+            <strong>Fevereiro 2026</strong><br>
+            <small>Entradas: R$&nbsp;200,00 | Saídas: R$&nbsp;780,86 | Saldo:
+              <span class="expense">-R$&nbsp;580,86</span></small>
+          </div>
+          <div class="history-actions">
+            <!-- Passa event para evitar propagação e fechar o modal -->
+            <button class="delete-month-btn"
+              onclick="event.stopPropagation(); deleteMonth('2026-2', 'Fevereiro 2026')">🗑️ Excluir</button>
+          </div>
+        </div>
+        <div class="history-item">
+          <div onclick="loadMonth('2026-1')" style="flex-grow: 1; cursor: pointer; padding-right: 15px;">
+            <!-- Adiciona padding -->
+            <strong>Janeiro 2026</strong><br>
+            <small>Entradas: R$&nbsp;300,00 | Saídas: R$&nbsp;297,56 | Saldo:
+              <span class="income">R$&nbsp;2,44</span></small>
+          </div>
+          <div class="history-actions">
+            <!-- Passa event para evitar propagação e fechar o modal -->
+            <button class="delete-month-btn"
+              onclick="event.stopPropagation(); deleteMonth('2026-1', 'Janeiro 2026')">🗑️ Excluir</button>
+          </div>
+        </div>
+        <div class="history-item">
+          <div onclick="loadMonth('2025-12')" style="flex-grow: 1; cursor: pointer; padding-right: 15px;">
+            <!-- Adiciona padding -->
+            <strong>Dezembro 2025</strong><br>
+            <small>Entradas: R$&nbsp;600,00 | Saídas: R$&nbsp;1.178,25 | Saldo:
+              <span class="expense">-R$&nbsp;578,25</span></small>
+          </div>
+          <div class="history-actions">
+            <!-- Passa event para evitar propagação e fechar o modal -->
+            <button class="delete-month-btn"
+              onclick="event.stopPropagation(); deleteMonth('2025-12', 'Dezembro 2025')">🗑️ Excluir</button>
+          </div>
+        </div>
+        <div class="history-item">
+          <div onclick="loadMonth('2025-11')" style="flex-grow: 1; cursor: pointer; padding-right: 15px;">
+            <!-- Adiciona padding -->
+            <strong>Novembro 2025</strong><br>
+            <small>Entradas: R$&nbsp;500,00 | Saídas: R$&nbsp;939,71 | Saldo:
+              <span class="expense">-R$&nbsp;439,71</span></small>
+          </div>
+          <div class="history-actions">
+            <!-- Passa event para evitar propagação e fechar o modal -->
+            <button class="delete-month-btn"
+              onclick="event.stopPropagation(); deleteMonth('2025-11', 'Novembro 2025')">🗑️ Excluir</button>
+          </div>
+        </div>
+        <div class="history-item">
+          <div onclick="loadMonth('2025-10')" style="flex-grow: 1; cursor: pointer; padding-right: 15px;">
+            <!-- Adiciona padding -->
+            <strong>Outubro 2025</strong><br>
+            <small>Entradas: R$&nbsp;500,00 | Saídas: R$&nbsp;2.628,09 | Saldo:
+              <span class="expense">-R$&nbsp;2.128,09</span></small>
+          </div>
+          <div class="history-actions">
+            <!-- Passa event para evitar propagação e fechar o modal -->
+            <button class="delete-month-btn"
+              onclick="event.stopPropagation(); deleteMonth('2025-10', 'Outubro 2025')">🗑️ Excluir</button>
+          </div>
+        </div>
+        <div class="history-item">
+          <div onclick="loadMonth('2025-9')" style="flex-grow: 1; cursor: pointer; padding-right: 15px;">
+            <!-- Adiciona padding -->
+            <strong>Setembro 2025</strong><br>
+            <small>Entradas: R$&nbsp;1.200,00 | Saídas: R$&nbsp;1.486,56 | Saldo:
+              <span class="expense">-R$&nbsp;286,56</span></small>
+          </div>
+          <div class="history-actions">
+            <!-- Passa event para evitar propagação e fechar o modal -->
+            <button class="delete-month-btn"
+              onclick="event.stopPropagation(); deleteMonth('2025-9', 'Setembro 2025')">🗑️ Excluir</button>
+          </div>
+        </div>
+        <div class="history-item">
+          <div onclick="loadMonth('2025-8')" style="flex-grow: 1; cursor: pointer; padding-right: 15px;">
+            <!-- Adiciona padding -->
+            <strong>Agosto 2025</strong><br>
+            <small>Entradas: R$&nbsp;1.200,00 | Saídas: R$&nbsp;1.293,10 | Saldo:
+              <span class="expense">-R$&nbsp;93,10</span></small>
+          </div>
+          <div class="history-actions">
+            <!-- Passa event para evitar propagação e fechar o modal -->
+            <button class="delete-month-btn" onclick="event.stopPropagation(); deleteMonth('2025-8', 'Agosto 2025')">🗑️
+              Excluir</button>
+          </div>
+        </div>
+        <div class="history-item">
+          <div onclick="loadMonth('2025-7')" style="flex-grow: 1; cursor: pointer; padding-right: 15px;">
+            <!-- Adiciona padding -->
+            <strong>Julho 2025</strong><br>
+            <small>Entradas: R$&nbsp;2.810,03 | Saídas: R$&nbsp;1.007,68 | Saldo:
+              <span class="income">R$&nbsp;1.802,35</span></small>
+          </div>
+          <div class="history-actions">
+            <!-- Passa event para evitar propagação e fechar o modal -->
+            <button class="delete-month-btn" onclick="event.stopPropagation(); deleteMonth('2025-7', 'Julho 2025')">🗑️
+              Excluir</button>
+          </div>
+        </div>
+        <div class="history-item">
+          <div onclick="loadMonth('2025-6')" style="flex-grow: 1; cursor: pointer; padding-right: 15px;">
+            <!-- Adiciona padding -->
+            <strong>Junho 2025</strong><br>
+            <small>Entradas: R$&nbsp;2.000,00 | Saídas: R$&nbsp;1.635,96 | Saldo:
+              <span class="income">R$&nbsp;364,04</span></small>
+          </div>
+          <div class="history-actions">
+            <!-- Passa event para evitar propagação e fechar o modal -->
+            <button class="delete-month-btn" onclick="event.stopPropagation(); deleteMonth('2025-6', 'Junho 2025')">🗑️
+              Excluir</button>
+          </div>
+        </div>
+        <div class="history-item">
+          <div onclick="loadMonth('2025-5')" style="flex-grow: 1; cursor: pointer; padding-right: 15px;">
+            <!-- Adiciona padding -->
+            <strong>Maio 2025</strong><br>
+            <small>Entradas: R$&nbsp;2.000,00 | Saídas: R$&nbsp;1.158,72 | Saldo:
+              <span class="income">R$&nbsp;841,28</span></small>
+          </div>
+          <div class="history-actions">
+            <!-- Passa event para evitar propagação e fechar o modal -->
+            <button class="delete-month-btn" onclick="event.stopPropagation(); deleteMonth('2025-5', 'Maio 2025')">🗑️
+              Excluir</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   <!-- O modal de confirmação será criado dinamicamente pelo JS -->
@@ -1228,33 +1386,8 @@
         value: value
       };
 
-      // Adiciona ao array correspondente
+      // Adiciona ao array correspondente (apenas no mês selecionado)
       financialData[monthKey][type].push(newItem);
-
-      // Lógica para adicionar item fixo ao próximo mês
-      if (type === 'incomeFixed' || type === 'fixedExpense') {
-        const [yearStr, monthStr] = monthKey.split('-');
-        let year = parseInt(yearStr);
-        let month = parseInt(monthStr);
-
-        let nextMonth = month + 1;
-        let nextYear = year;
-        if (nextMonth > 12) {
-          nextMonth = 1;
-          nextYear = year + 1;
-        }
-        const nextMonthKey = `${nextYear}-${nextMonth}`;
-
-        initializeMonth(nextMonthKey); // Garante que o próximo mês e seus arrays existam
-
-        // Verifica se já existe item com mesma descrição no próximo mês
-        const existsInNextMonth = financialData[nextMonthKey][type].some(item => item && item.desc === newItem.desc);
-
-        if (!existsInNextMonth) {
-          const forwardedItem = { ...newItem, id: generateId() }; // Cria cópia com novo ID
-          financialData[nextMonthKey][type].push(forwardedItem);
-        }
-      }
 
       saveData(); // Salva os dados atualizados
       renderItems(); // Re-renderiza a interface
@@ -1668,6 +1801,219 @@
 
 
 
+    // ─────────────────────────────────────────────────────────
+    // Replicação Manual de Itens Fixos para o Próximo Mês
+    // ─────────────────────────────────────────────────────────
+
+    function _replicateToNextMonth(type, labelNome) {
+      const monthKey = getCurrentMonthKey();
+      if (!monthKey) return;
+
+      initializeMonth(monthKey);
+      const currentItems = financialData[monthKey][type];
+
+      if (!currentItems || currentItems.length === 0) {
+        showCustomAlert(`Não há itens em "${labelNome}" para replicar.`);
+        return;
+      }
+
+      const [yearStr, monthStr] = monthKey.split('-');
+      let year = parseInt(yearStr);
+      let month = parseInt(monthStr);
+      let nextMonth = month + 1;
+      let nextYear = year;
+      if (nextMonth > 12) { nextMonth = 1; nextYear = year + 1; }
+      const nextMonthKey = `${nextYear}-${nextMonth}`;
+
+      initializeMonth(nextMonthKey);
+
+      let added = 0;
+      let skipped = 0;
+
+      currentItems.forEach(item => {
+        if (!item || typeof item.desc !== 'string') return;
+        const alreadyExists = financialData[nextMonthKey][type].some(i => i && i.desc === item.desc);
+        if (!alreadyExists) {
+          financialData[nextMonthKey][type].push({ ...item, id: generateId() });
+          added++;
+        } else {
+          skipped++;
+        }
+      });
+
+      saveData();
+
+      const mesNomes = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+      const nomeMes = mesNomes[nextMonth - 1];
+      let msg = `Replicação concluída para ${nomeMes}/${nextYear}.\n✅ ${added} item(s) adicionado(s).`;
+      if (skipped > 0) msg += `\n⚠️ ${skipped} item(s) ignorado(s) por já existirem.`;
+      showCustomAlert(msg);
+    }
+
+    function replicateFixedIncomesToNextMonth() {
+      _replicateToNextMonth('incomeFixed', 'Entradas Fixas');
+    }
+
+    function replicateFixedExpensesToNextMonth() {
+      _replicateToNextMonth('fixedExpense', 'Saídas Fixas');
+    }
+
+
+    // ─────────────────────────────────────────────────────────
+    // Exportação de Dados (JSON)
+    // ─────────────────────────────────────────────────────────
+
+    function exportData() {
+      try {
+        const jsonString = JSON.stringify(financialData, null, 2);
+        const blob = new Blob([jsonString], { type: 'application/json;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        const now = new Date();
+        const timestamp = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+        a.href = url;
+        a.download = `financialData_${timestamp}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      } catch (e) {
+        showCustomAlert('Erro ao exportar os dados: ' + e.message);
+      }
+    }
+
+
+    // ─────────────────────────────────────────────────────────
+    // Importação de Dados (JSON) — merge por chave YYYY-M
+    // ─────────────────────────────────────────────────────────
+
+    function importData(event) {
+      const file = event.target.files[0];
+      // Reseta o input para permitir reimportar o mesmo arquivo
+      event.target.value = '';
+
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        try {
+          const raw = e.target.result;
+          const parsed = JSON.parse(raw);
+
+          if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
+            showCustomAlert('Arquivo inválido: o JSON não possui o formato esperado (objeto raiz).');
+            return;
+          }
+
+          // Valida que as chaves seguem o padrão YYYY-M ou YYYY-MM
+          const validKeyPattern = /^\d{4}-\d{1,2}$/;
+          const keys = Object.keys(parsed);
+          const invalidKeys = keys.filter(k => !validKeyPattern.test(k));
+          if (invalidKeys.length > 0) {
+            showCustomAlert(`Arquivo inválido: chaves fora do padrão YYYY-M encontradas:\n${invalidKeys.slice(0, 5).join(', ')}`);
+            return;
+          }
+
+          showCustomConfirm(
+            `Importar dados de "${file.name}"?\n\nEscolha a estratégia:\n• "Sim" = Mesclar (mantém meses existentes, adiciona novos)\n• "Não" = Substituir tudo`,
+            'Mesclar',
+            'Substituir',
+            function (doMerge) {
+              if (doMerge === null) return; // Cancelou (ESC ou backdrop)
+
+              if (doMerge) {
+                // Merge: para cada chave do arquivo importado, mescla arrays sem duplicar por descrição
+                keys.forEach(monthKey => {
+                  initializeMonth(monthKey);
+                  const importedMonth = parsed[monthKey];
+                  ['incomeFixed', 'incomeVariable', 'fixedExpense', 'eventualExpense'].forEach(type => {
+                    if (Array.isArray(importedMonth[type])) {
+                      importedMonth[type].forEach(item => {
+                        if (!item || typeof item.desc !== 'string') return;
+                        const exists = financialData[monthKey][type].some(i => i && i.desc === item.desc);
+                        if (!exists) {
+                          financialData[monthKey][type].push({ ...item, id: generateId() });
+                        }
+                      });
+                    }
+                  });
+                });
+                showCustomAlert(`Dados mesclados com sucesso! ${keys.length} mês(es) processado(s).`);
+              } else {
+                // Substituição total
+                // Normaliza os dados importados garantindo estrutura dos arrays
+                keys.forEach(monthKey => {
+                  const m = parsed[monthKey];
+                  parsed[monthKey] = {
+                    incomeFixed: Array.isArray(m.incomeFixed) ? m.incomeFixed : [],
+                    incomeVariable: Array.isArray(m.incomeVariable) ? m.incomeVariable : [],
+                    fixedExpense: Array.isArray(m.fixedExpense) ? m.fixedExpense : [],
+                    eventualExpense: Array.isArray(m.eventualExpense) ? m.eventualExpense : []
+                  };
+                });
+                // Substitui o objeto global
+                Object.keys(financialData).forEach(k => delete financialData[k]);
+                Object.assign(financialData, parsed);
+                showCustomAlert(`Dados substituídos com sucesso! ${keys.length} mês(es) carregado(s).`);
+              }
+
+              saveData();
+              renderItems();
+            }
+          );
+
+        } catch (err) {
+          showCustomAlert('Erro ao processar o arquivo JSON: ' + err.message);
+        }
+      };
+      reader.onerror = () => showCustomAlert('Erro ao ler o arquivo.');
+      reader.readAsText(file, 'UTF-8');
+    }
+
+
+    // Confirm customizado com labels configuráveis (usado pelo import)
+    function showCustomConfirm(message, yesLabel, noLabel, callback) {
+      const existingModal = document.getElementById('confirmModal');
+      if (existingModal) existingModal.remove();
+
+      const safeMsg = message.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+      const modalHTML = `
+        <div id="confirmModal" class="confirm-modal" style="display: flex;">
+          <div class="confirm-content">
+            <h3>⚠️ Confirmação</h3>
+            <p style="line-height:1.6;">${safeMsg}</p>
+            <div class="confirm-buttons">
+              <button class="confirm-yes" style="background:#27ae60;">${yesLabel || 'Sim'}</button>
+              <button type="button" class="confirm-no">${noLabel || 'Não'}</button>
+              <button type="button" id="cancelImportBtn" style="background:#95a5a6;color:white;padding:10px 20px;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:bold;">Cancelar</button>
+            </div>
+          </div>
+        </div>`;
+      document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+      const modalElement = document.getElementById('confirmModal');
+      const yesBtn = modalElement.querySelector('.confirm-yes');
+      const noBtn = modalElement.querySelector('.confirm-no');
+      const cancelBtn = modalElement.querySelector('#cancelImportBtn');
+
+      let localCb = callback;
+      const close = (val) => {
+        if (modalElement) modalElement.remove();
+        document.removeEventListener('keydown', escHandler);
+        if (localCb) { localCb(val); localCb = null; }
+      };
+
+      yesBtn.onclick = () => close(true);
+      noBtn.onclick = () => close(false);
+      cancelBtn.onclick = () => close(null);
+
+      const escHandler = (e) => { if (e.key === 'Escape') close(null); };
+      document.addEventListener('keydown', escHandler);
+      modalElement.addEventListener('click', (ev) => { if (ev.target === modalElement) close(null); });
+      setTimeout(() => noBtn.focus(), 50);
+    }
+
+
     // Eventos de mudança de mês/ano
     document.getElementById('monthSelect').addEventListener('change', renderItems);
     document.getElementById('yearInput').addEventListener('change', renderItems);
@@ -1782,8 +2128,7 @@
     -->
   <script id="financialDataStorage" type="application/json">
 
-    </script>
-
+</script>
 </body>
 
 </html>
